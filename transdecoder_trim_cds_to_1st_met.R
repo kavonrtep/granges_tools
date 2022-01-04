@@ -7,7 +7,7 @@ option_list <- list(
   make_option(c("-s", "--transcripts"), action = "store", type = "character",
               help = "transcriptome fasta file", default = NULL),
   make_option(c("-o", "--output"), action = "store", type = "character",
-              help = "output gff with modified CDS coordinate", default = NULL)
+              help = "output base name for gff with modified CDS coordinate and fasta with petides", default = NULL)
 
 )
 description <- "
@@ -82,6 +82,11 @@ start(g_cds_adjusted) <- adjusted_position_start
 end(g_cds_adjusted) <- adjusted_position_end
 g_cds_adjusted_ok <- g_cds_adjusted[cond1 & cond2 & cond3]
 
-# new gff
+
+pep_adjusted <- translate(getSeq(s, g_cds_adjusted_ok))
+names(pep_adjusted) <- g_cds_adjusted_ok$ID
+
+# export adjusted data
 g_adjusted <- sort(append(g[g$type != 'CDS'], g_cds_adjusted_ok))
-export(g_adjusted, opt$output, format = 'gff3')
+export(g_adjusted, paste0(opt$output, ".gff3"), format = 'gff3')
+writeXStringSet(pep_adjusted, filepath = paste0(opt$output, ".pep"))
