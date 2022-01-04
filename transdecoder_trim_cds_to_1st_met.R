@@ -58,6 +58,16 @@ g_cds <-  g[g$type == "CDS"]
 
 CDS <-  getSeq(s,g_cds)
 pep <-  translate(CDS)
+# statistics:
+stats = list(
+  "total_cds                  " = length(pep),
+  "cds_start_with_Met         " = sum(substr(pep,1,1) == "M"),
+  "cds_does_not_start_with_met" = sum(substr(pep,1,1) != "M")
+)
+# print statistics
+cat("CDS statistics:\n")
+. <-  Map(function(x, n)cat(n, ':', x, "\n"), stats, names(stats))
+
 first_Met <- regexpr("M", as.character(pep))
 adjusted_position_start <- ifelse(strand(g_cds) == "+", start(g_cds) + (first_Met - 1) * 3 , start(g_cds))
 adjusted_position_end <- ifelse(strand(g_cds) == "-", end(g_cds) - (first_Met - 1) * 3 , end(g_cds))
