@@ -4,7 +4,7 @@ parser <- OptionParser()
 option_list <- list(
   make_option(c("-e", "--eggnog"), action = "store", type = "character",
               help = "oggnog output - out.emapper.annotations", default = NULL),
-  make_option(c("-g", "--ggf"), action = "store", type = "character",
+  make_option(c("-g", "--gff"), action = "store", type = "character",
               help = "input gff", default = NULL),
   make_option(c("-o", "--gff_out"), action = "store", type = "character",
               help = "output gff with eggnog annotation attached", default = NULL)
@@ -38,7 +38,6 @@ read_annot <- function(x) {
 if (file.exists(opt$gff_out)) {
   stop("output gff already exists")
 }
-
 g <- import(opt$gff)
 egg <- read_annot(opt$eggnog)
 
