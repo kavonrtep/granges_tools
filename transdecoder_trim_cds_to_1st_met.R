@@ -57,7 +57,7 @@ names(s) <- gsub(" .+", "", names(s))
 g_cds <-  g[g$type == "CDS"]
 
 CDS <-  getSeq(s,g_cds)
-pep <-  translate(CDS)
+pep <-  translate(CDS, no.init.codon = TRUE)
 # statistics:
 stats = list(
   "total_cds                  " = length(pep),
