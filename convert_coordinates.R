@@ -8,6 +8,8 @@ option_list <- list(
               help = "input genomic tracks", default = NULL),
   make_option(c("-f", "--format"), action = "store", type = "character",
               help = "format of genomic track: GFF3 (default), BED, WIG or BigWig) ", default = "GFF3"),
+  make_option(c("-n", "--new_seqid"), action = "store", type = "character",
+              help = "new seqid "),
   make_option(c("-c", "--conversion_table"), action = "store", type = "character",
               help = "table with coordinates for conversion", default = NULL)
 )
@@ -20,6 +22,7 @@ opt <- parse_args(parser, args = commandArgs(TRUE))
 # Required options
 if (any(is.null(opt$output),
         is.null(opt$input),
+        is.null(opt$new_seqid),
         is.null(opt$conversion_table))){
   print_help(parser)
   stop('all argument are required!')
@@ -33,6 +36,11 @@ suppressPackageStartupMessages({
 if(FALSE){
   gin <-  import("/mnt/ceph/454_data/MinION/analysis/centromere_assembly_Cameor/211209_CEN6_ANALYSIS/satellites/annotation/tandem_repeats_curated_track_220218.gff",format = "GFF")
   conversion_table <- read.table("/mnt/ceph/454_data/MinION/analysis/centromere_assembly_Cameor/220329_CEN6_assembly_correction/coordinates_220406", as.is=TRUE, sep="\t", col.names = c("seqname", "start", "end", "strand"))
+
+  gin <-  import("tmp/C1P23_C1K_bs200.bigwig",format = "BigWig")
+  gin <- gin[seqnames(gin) == "CEN6_ver_211209"]
+  conversion_table <- read.table("tmp/coordinates_220406", as.is=TRUE, sep="\t", col.names = c("seqname", "start", "end", "strand"))
+
 }
 
 
@@ -57,8 +65,9 @@ for (i in seq_along(ct)){
 
 gall <- unlist(gin_new)
 
+# reduce only if format was gff or bed
 gall_merged <- reduce(gall, with.revmap = TRUE)
-
+if (opt$format == "GFF3" | opt$format == "BED"){
 if (length(gall) == length(gall_merged)){
   # no close ranges - gall is ok
   gout <- gall
@@ -88,4 +97,9 @@ if (length(gall) == length(gall_merged)){
   gout <- c(gall[ok_ranges], unlist(merged_ranges))
 }
 
+}else{
+  gout <- gall
+}
+
+seqlevels(gout)[seqlevels(gout) %in% seqlevels(ct)] <- opt$new_seqid
 export(gout, con = opt$output, format = opt$format)
