@@ -7,7 +7,7 @@ option_list <- list(
   make_option(c("-i", "--input"), action = "store", type = "character",
               help = "input genomic tracks", default = NULL),
   make_option(c("-f", "--format"), action = "store", type = "character",
-              help = "format of genomic track: GFF3 (default), BED, WIG or BigWig) ", default = "GFF3"),
+              help = "format of genomic track: GFF3 (default), BED, WIG, BigWig or BedGraph) ", default = "GFF3"),
   make_option(c("-n", "--new_seqid"), action = "store", type = "character",
               help = "new seqid "),
   make_option(c("-c", "--conversion_table"), action = "store", type = "character",
@@ -54,7 +54,7 @@ conversion_table$new_start <-  cumsum(c(1, conversion_table$width))[1:N]
 conversion_table$new_end <-  cumsum(conversion_table$width)
 ct <- makeGRangesFromDataFrame(conversion_table)
 
-p <-  findOverlaps(gin, ct)
+p <-  findOverlaps(gin, ct, ignore.strand = TRUE)
 gin_new <- GRangesList()
 for (i in seq_along(ct)){
   f <-  conversion_table$new_start[i] - conversion_table$start[i]
@@ -102,4 +102,4 @@ if (length(gall) == length(gall_merged)){
 }
 
 seqlevels(gout)[seqlevels(gout) %in% seqlevels(ct)] <- opt$new_seqid
-export(gout, con = opt$output, format = opt$format)
+export(sort(gout, ignore.strand = TRUE), con = opt$output, format = opt$format)
