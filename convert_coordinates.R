@@ -51,6 +51,8 @@ col.names = c("seqname", "start", "end", "strand"))
 
   gin = makeGRangesFromDataFrame(data.frame(seqname = "CEN6_ver_211209", start=seq(1, 172063895, by=1000), end=seq(1, 172063895, by=1000)+1))
   gin$ID=start(gin)
+  gin <- import("tmp/PROFREP_Ns.gff", format = "GFF3")
+  gin <- import("tmp/DANTE.gff", format = "GFF3")
 }
 
 
@@ -73,16 +75,21 @@ ct <- makeGRangesFromDataFrame(conversion_table)
 
 p <- findOverlaps(gin, ct, ignore.strand = TRUE)
 gin_new <- GRangesList()
+gin_new <- list()
+
 for (i in seq_along(ct)) {
   f <- conversion_table$new_start[i] - conversion_table$start[i]
   gin_part <- gin[from(p)[to(p) == i]]
   gin_part_trimmed <- restrict(gin_part, conversion_table$start[i],
                                conversion_table$end[i])
   gin_new[[i]] <- shift(gin_part_trimmed, f)
-  gin_new[[i]]$.BLOCK=i
+  if (length(gin_new[[i]])>0){
+    gin_new[[i]]$.BLOCK=i
+  }
 }
 
-gall <- unlist(gin_new)
+#gall <- unlist(gin_new)
+gall <- unlist(GRangesList(gin_new))
 
 # reduce only if format was gff or bed and original tracks does not overlap
 gall_merged <- reduce(gall, with.revmap = TRUE)
