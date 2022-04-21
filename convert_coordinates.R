@@ -53,6 +53,7 @@ col.names = c("seqname", "start", "end", "strand"))
   gin$ID=start(gin)
   gin <- import("tmp/PROFREP_Ns.gff", format = "GFF3")
   gin <- import("tmp/DANTE.gff", format = "GFF3")
+  gin <- import("tmp/full_length_LTR_TE_elements.gff3")
 }
 
 
@@ -72,6 +73,12 @@ N <- nrow(conversion_table)
 conversion_table$new_start <- cumsum(c(1, conversion_table$width))[1:N]
 conversion_table$new_end <- cumsum(conversion_table$width)
 ct <- makeGRangesFromDataFrame(conversion_table)
+
+original_seqlengths = seqlengths(gin)
+
+SL <-  max(conversion_table$new_end)
+
+seqlengths(gin) <- NA
 
 p <- findOverlaps(gin, ct, ignore.strand = TRUE)
 gin_new <- GRangesList()
@@ -127,13 +134,28 @@ if ((opt$format == "GFF3" | opt$format == "BED") & !overlaping_tracks) {
   gout <- gall
 }
 
-seqlevels(gout)[seqlevels(gout) %in% seqlevels(ct)] <- opt$new_seqid
+# change seqlenth and seqname
+idx <- seqlevels(gout) %in% seqlevels(ct)
+seqlengths(gout)[!idx] <- original_seqlengths[idx]
+seqlengths(gout)[idx] <- SL
+seqlevels(gout)[idx] <- opt$new_seqid
+
 gout_sorted <- sort(gout, ignore.strand = TRUE)
 if (!is.null(gout_sorted$ID)){
   if (any(duplicated(gout_sorted$ID))){
     message("some ID are duplicated, adding numerical suffix")
-    gout_sorted$ID=paste0(gout_sorted$ID, "__", gout_sorted$.BLOCK)
-
+    # not all features has ID!
+    if (class(gout_sorted$ID) == "character"){
+      new_id <- ifelse(is.na(gout_sorted$ID), gout_sorted$ID, paste0(gout_sorted$ID,"__",gout_sorted$.BLOCK))
+    }else{
+      new_id <- CharacterList(mapply(FUN = function(x,y) if (length(x)==0){x}else{paste0(x,"__",y)}, x=gout_sorted$ID, y=gout_sorted$.BLOCK))
+    }
+    gout_sorted$ID=new_id
+    if ("Parent" %in% names(mcols(head(gout_sorted)))){
+      message("Renaming Parents ")
+      np <- mapply(FUN = function(x,y) if (length(x)==0){x}else{paste0(x,"__",y)}, x=gout_sorted$Parent, y=gout_sorted$.BLOCK)
+      gout_sorted$Parent <- CharacterList(np)
+    }
   }
 }
 gout_sorted$.BLOCK=NULL
