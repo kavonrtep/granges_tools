@@ -37,7 +37,7 @@ BN <- opt$output_prefix
 min_width <- as.numeric(opt$min_width)
 
 
-gff_min_width <- gff[width(gff) >= min_width]
+gff_min_width <- sort(gff[width(gff) >= min_width], by = ~ seqnames * start)
 gff_min_width_parts <- split(gff_min_width, f=mcols(gff_min_width)[,opt$attribute_name])
 out_fname <- fn_sanitize(names(gff_min_width_parts))
 
@@ -48,6 +48,3 @@ for (i in seq_along(out_fname)){
          )
   )
 }
-
-
-
