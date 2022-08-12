@@ -38,13 +38,17 @@ min_width <- as.numeric(opt$min_width)
 
 
 gff_min_width <- sort(gff[width(gff) >= min_width], by = ~ seqnames * start)
-gff_min_width_parts <- split(gff_min_width, f=mcols(gff_min_width)[,opt$attribute_name])
-out_fname <- fn_sanitize(names(gff_min_width_parts))
 
-for (i in seq_along(out_fname)){
-  export(gff_min_width_parts[[i]],
-         format="gff3",
-         con=paste0(opt$output_prefix, "_", out_fname[i], ".gff"
-         )
-  )
+if (is.null(opt$attribute_name)){
+  export(gff_min_width, con = paste(BN, "gff", sep = "."), format = "gff")
+}else{
+  gff_min_width_parts <- split(gff_min_width, f=mcols(gff_min_width)[,opt$attribute_name])
+  out_fname <- fn_sanitize(names(gff_min_width_parts))
+  for (i in seq_along(out_fname)){
+    export(gff_min_width_parts[[i]],
+           format="gff3",
+           con=paste0(opt$output_prefix, "_", out_fname[i], ".gff"
+           )
+    )
+  }
 }
