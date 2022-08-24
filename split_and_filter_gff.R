@@ -42,7 +42,12 @@ gff_min_width <- sort(gff[width(gff) >= min_width], by = ~ seqnames * start)
 if (is.null(opt$attribute_name)){
   export(gff_min_width, con = paste(BN, "gff", sep = "."), format = "gff")
 }else{
-  gff_min_width_parts <- split(gff_min_width, f=mcols(gff_min_width)[,opt$attribute_name])
+  if (opt$attribute_name == "seqnames"){
+    f <- seqnames(gff_min_width)
+  }else{
+    f <- mcols(gff_min_width)[,opt$attribute_name]
+  }
+  gff_min_width_parts <- split(gff_min_width, f = f)
   out_fname <- fn_sanitize(names(gff_min_width_parts))
   for (i in seq_along(out_fname)){
     export(gff_min_width_parts[[i]],
