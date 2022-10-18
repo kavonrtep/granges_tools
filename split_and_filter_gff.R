@@ -38,9 +38,10 @@ min_width <- as.numeric(opt$min_width)
 
 
 gff_min_width <- sort(gff[width(gff) >= min_width], by = ~ seqnames * start)
+head(gff_min_width)
 
 if (is.null(opt$attribute_name)){
-  export(gff_min_width, con = paste(BN, "gff", sep = "."), format = "gff")
+  export(gff_min_width, con = paste(BN, "gff3", sep = "."), format = "gff3")
 }else{
   if (opt$attribute_name == "seqnames"){
     f <- seqnames(gff_min_width)
