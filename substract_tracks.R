@@ -10,7 +10,7 @@ option_list <- list(
 )
 
 description <- "
-This script substracts track B from track A and write outputs GFF3 file, annotation from track A is kept"
+This script subtracts track B from track A and write outputs GFF3 file, annotation from track A is kept"
 
 parser <- OptionParser(option_list = option_list, description = description,
                        usage = "usage: %prog COMMAND [OPTIONS]")
