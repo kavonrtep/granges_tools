@@ -44,8 +44,9 @@ r <- readDNAStringSet(opt$reference)
 g <- import(opt$gff)
 sl <- seqlengths(r)
 rm(r)
-seqlengths(g) <- sl
+seqlengths(g) <- sl[seqlevels(g)]
 d <- get_density(g, tw=opt$window)
 d$score=d$coverage
+print(summary(d$score))
 
 export(d, format = "BigWig", con = opt$output)
