@@ -16,7 +16,7 @@ option_list = list(
               help = "number of bins for histogram ", default = 100)
 )
 
-description <- "Plot feature lengths histogram for the mouist abundand features"
+description <- "Plot feature lengths histogram for the most abundand features"
 epilogue <- ""
 parser <- OptionParser(option_list = option_list, epilogue = epilogue, description = description,
                        usage = "usage: %prog COMMAND [OPTIONS]")
