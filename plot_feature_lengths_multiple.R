@@ -13,7 +13,7 @@ option_list = list(
   make_option(c("-n", "--number_of_features"), action = "store", type = "character",
               help = "Number of the most abundand features to be ploted", default = 10),
   make_option(c("-N", "--nbins"), action = "store", type = "numeric",
-              help = "minimal size of feature to be kept in output", default = 100)
+              help = "number of bins for histogram ", default = 100)
 )
 
 description <- "Plot feature lengths histogram for the mouist abundand features"
