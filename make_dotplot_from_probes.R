@@ -74,7 +74,7 @@ colnames(blast_df) <- new_colnames
 names(new_colnames) %in% names(QS)
 
 # Create a color scheme for strand
-color_scheme <- ifelse(blast_df$sstrand == "plus", "red", "blue")
+color_scheme <- ifelse(blast_df$sstrand == "plus", "blue", "red")
 
 # Create a factor with levels ordered by chromosome size
 blast_df$qseqid <- factor(blast_df$qseqid, levels=chromosome_sizes_query$qseqid)
