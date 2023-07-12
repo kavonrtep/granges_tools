@@ -3,9 +3,9 @@
 library(optparse)
 options_list <- list(
   make_option(c("-q","--query"), action = "store", type = "character",
-              help = "query is blast ouput tabular format", default = NULL),
+              help = "query is blast output in tabular format", default = NULL),
   make_option(c("-s", "--subject"), action = "store", type = "character",
-              help = "subject blast output tabular format", default = NULL),
+              help = "subject blast output in tabular format", default = NULL),
   make_option(c("-Q", "--query_chromosome_sizes"), action = "store", type = "character",
               help = "file with chromosome sizes for query(.fai format)", default = NULL),
   make_option(c("-S", "--subject_chromosome_sizes"), action = "store", type = "character",
