@@ -86,17 +86,25 @@ chromosome_sizes_subject$cumulative_slen <- cumsum(as.numeric(chromosome_sizes_s
 chromosome_sizes_query$cumulative_start <- c(1, head(chromosome_sizes_query$cumulative_qlen, -1))
 chromosome_sizes_subject$cumulative_start <- c(1, head(chromosome_sizes_subject$cumulative_slen, -1))
 
+xmax <- max(chromosome_sizes_query$cumulative_qlen)
+ymax <- max(chromosome_sizes_subject$cumulative_slen)
 
+# height is fixed at 4000 pixels
+H <- 10
+M <- 1
+# width is proportional to the size of the subject genome
+W <- round(H * xmax / ymax)
 
 # Create a blank plot with appropriate limits and labels
 query_label <- basename(opt$query)
 subject_label <- basename(opt$subject)
-png(opt$output, width=4000, height=4000, pointsize = 40)
-plot(1, 1, xlim =c(1,  max(chromosome_sizes_query$cumulative_qlen)), ylim =c(1, max(chromosome_sizes_subject$cumulative_slen)),
+png(opt$output, width=W + M * 2, height=H + M * 2, res = 600, units = "in")
+par(mai = rep(M, 4))
+plot(1, 1, xlim =c(1,  xmax), ylim =c(1, ymax),
      xlab = query_label, ylab =  subject_label, type = "n", axes = FALSE)
 
 # Draw lines for each chromosome
-par(lwd=5)
+par(lwd=1)
 abline(v = c(1, chromosome_sizes_query$cumulative_qlen), lty = 2, col = "grey")
 
 
@@ -105,8 +113,8 @@ abline(h = c(1, chromosome_sizes_subject$cumulative_slen), lty = 2, col = "grey"
 
 # Add text labels for chromosomes
 
-axis(side = 1, at = chromosome_sizes_query$cumulative_qlen - chromosome_sizes_query$qlen / 2, labels = chromosome_sizes_query$qseqid, tick = FALSE)
-axis(side = 2, at =chromosome_sizes_subject$cumulative_slen - chromosome_sizes_subject$slen / 2, labels = chromosome_sizes_subject$sseqid, tick = FALSE)
+axis(side = 1, at = chromosome_sizes_query$cumulative_qlen - chromosome_sizes_query$qlen / 2, labels = chromosome_sizes_query$qseqid, tick = FALSE, cex.axis = 1)
+axis(side = 2, at =chromosome_sizes_subject$cumulative_slen - chromosome_sizes_subject$slen / 2, labels = chromosome_sizes_subject$sseqid, tick = FALSE, cex.axis = 1)
 
 #
 # Calculate the start and end of each hit relative to the start of the chromosome

@@ -18,7 +18,7 @@ fasta.write(xsel.stdout.read())
 fasta.flush()
 
 # run dotter
-subprocess.call(['dotter', fasta.name, fasta.name])
+subprocess.call(['dotter', "-W", "10", fasta.name, fasta.name])
 
 # delete fasta file
 fasta.close()
